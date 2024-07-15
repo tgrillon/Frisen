@@ -1,9 +1,10 @@
 # FriskaEngine
 Game engine development. 
 
-# Reference
-### Books 
-This project will use CMake to configure/generate and build applications. 
-- Book reference for CMake : Modern CMake for C++ - Alexander Kushnir 
+# References
 
-- Book reference for the engine architecture : Game Engine Architecture (Third edition) - Jason Gregory 
+This project will use CMake to configure/generate and build applications.
+
+This project is based on these two books :
+- Modern CMake for C++ - Alexander Kushnir (for the project configuration and build system) 
+- Game Engine Architecture (Third edition) - Jason Gregory (for the architecture)

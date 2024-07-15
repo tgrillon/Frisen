@@ -1,0 +1,12 @@
+build_debug/
+build_release/
+
+**/CMakeCache.txt
+**/install_manifest.txt
+
+**/CTestTestfile.cmake
+**/CPackConfig.cmake
+**/cmake_install.cmake
+
+**/CMakeUserPresets.json 
+**/compile_commands.json

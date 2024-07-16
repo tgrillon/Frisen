@@ -1,4 +1,4 @@
-# FRISEN
+# Frisen (Friska Engine)
 Game engine development. 
 
 # References

@@ -1,0 +1,9 @@
+[submodule "Frisen/vendor/imgui"]
+	path = Frisen/vendor/imgui
+	url = https://github.com/tgrillon/imgui.git
+[submodule "Frisen/vendor/glfw"]
+	path = Frisen/vendor/glfw
+	url = https://github.com/tgrillon/glfw.git
+[submodule "Frisen/vendor/glm"]
+	path = Frisen/vendor/glm
+	url = https://github.com/tgrillon/glm.git

@@ -1,5 +1,5 @@
 # Frisen (Friska Engine)
-Game engine development. 
+Graphic engine development. 
 
 # References
 

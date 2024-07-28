@@ -9,6 +9,9 @@ This project is based on these two books :
 - Modern CMake for C++ - Rafal Świdziński (for the project configuration and build system) 
 - Game Engine Architecture (Third edition) - Jason Gregory (for the architecture)
 
+## Inspired by 
+- [Hazel Engine](https://github.com/TheCherno/Hazel/tree/master)
+
 # Dependencies
 
 - OpenGL

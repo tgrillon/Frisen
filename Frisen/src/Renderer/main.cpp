@@ -5,16 +5,18 @@
 
 #include <iostream>
 
+#include "VertexArray.h"
+
 const char* VERTEX_SOURCE = R"DELIM(
 #version 330 
 layout(location = 0) in vec3 a_Pos;
 layout(location = 1) in vec3 a_Color;
 
-out vec3 v_Color; 
+out vec3 f_Color; 
 
 void main(void)
 {
-  v_Color = a_Color;
+  f_Color = a_Color;
   gl_Position = vec4(a_Pos, 1.0);
 }
 )DELIM";
@@ -111,14 +113,16 @@ int main(void)
   glViewport(0, 0, 800, 600);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
 
-  float vertices[18] = {
+  float vertices[24] = {
+    /* POSITION */  0.5,  0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15, 
+    /* POSITION */  0.5, -0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15, 
     /* POSITION */ -0.5, -0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15, 
-    /* POSITION */ 0.0, 0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15, 
-    /* POSITION */ 0.5, -0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15 
+    /* POSITION */ -0.5,  0.5, 0.0, /* COLOR */ 0.86, 0.24, 0.15 
   };
 
-  unsigned int indices[3] = {
-    0, 1, 2
+  unsigned int indices[6] = {
+    0, 1, 2, 
+    0, 2, 3
   };
 
   /*************** SHADER ***************/
@@ -127,10 +131,10 @@ int main(void)
   glCompileShader(vertexShader);
   check_compile_errors(vertexShader, "GL_VERTEX_SHADER");
 
-  const unsigned int geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
-  glShaderSource(geometryShader, 1, &GEOMETRY_SOURCE, nullptr);
-  glCompileShader(geometryShader);
-  check_compile_errors(geometryShader, "GL_GEOMETRY_SHADER");
+  // const unsigned int geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+  // glShaderSource(geometryShader, 1, &GEOMETRY_SOURCE, nullptr);
+  // glCompileShader(geometryShader);
+  // check_compile_errors(geometryShader, "GL_GEOMETRY_SHADER");
 
   const unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragmentShader, 1, &FRAGMENT_SOURCE, nullptr);
@@ -139,7 +143,7 @@ int main(void)
 
   const unsigned int program = glCreateProgram();
   glAttachShader(program, vertexShader);
-  glAttachShader(program, geometryShader);
+  // glAttachShader(program, geometryShader);
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
 
@@ -147,31 +151,22 @@ int main(void)
   glDeleteShader(fragmentShader);
 
   /*************** BUFFERS ***************/
-  unsigned int vbo, vao, ebo;
-  glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
-  glGenVertexArrays(1, &vao);
 
-  glBindVertexArray(vao);
+
+  Frisen::VAO vao;
   
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+  Frisen::VBO vbo(vertices, sizeof(vertices));
+  vbo.SetLayout({
+    {Frisen::ShaderDataType::FLOAT3}, // a_Pos
+    {Frisen::ShaderDataType::FLOAT3}, // a_Color
+  });
   
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);
+  vao.AddVBO(vbo);
 
-  // a_Pos
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * 4, (const void*) 0); 
-
-  // a_Color
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * 4, (const void*) (3 * 4)); 
-
-  glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+  Frisen::EBO ebo(indices, 6);
+  vao.Unbind();
+  ebo.Unbind();
+  vbo.Unbind();
   // Main LOOP 
   while(!glfwWindowShouldClose(window))
   {
@@ -184,17 +179,20 @@ int main(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(program);
-    glBindVertexArray(vao);
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    vao.Bind(); 
 
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void*)0);
+    // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
+  glDeleteProgram(program);
+  // vao.Destroy();
+  // vbo.Destroy();
+  // ebo.Destroy();
+  glfwDestroyWindow(window);
   glfwTerminate();
   return EXIT_SUCCESS;
 }
